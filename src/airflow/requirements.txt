@@ -1,0 +1,9 @@
+xgboost
+kafka-python    
+pandas
+pyspark
+scikit-learn
+python-dotenv
+boto3
+mlflow
+pyyaml
