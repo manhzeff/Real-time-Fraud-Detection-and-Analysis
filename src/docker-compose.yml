@@ -292,7 +292,7 @@ services:
     depends_on:
       - minio
     container_name: mc
-    env-file: 
+    env_file: 
       - .env
     entrypoint: >
       /bin/sh -c "
@@ -316,21 +316,21 @@ services:
     image: mlflow-server
     container_name: mlflow-server
     denpends_on:
+      - mc
       - postgres
-      - mc 
     ports:
-      - 5500:5500
+      - "5500:5500"
     environment:
-      - MLFLOW_S3_ENDPOINT_URL: http://minio:9000
-      - AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-    command: mlflow server --port 5500 --host 0.0.0.0 --backend-store-uri postgresql+psycopg2://mlflow:mlflow@mlflow-db/mlflow --default-artifact-root s3://mlflow --serve-artifacts --artifacts-destination s3://mlflow
+      - MLFLOW_S3_ENDPOINT_URL= http://minio:9000
+      - AWS_ACCESS_KEY_ID= ${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY= ${AWS_SECRET_ACCESS_KEY}
+    command: mlflow server --port 5500 --host 0.0.0.0 --backend-store-uri postgresql+psycopg2://mlflow:mlflow@postgres/mlflow --default-artifact-root s3://mlflow
     networks:
       - fraud-detection
 volumes:
   postgres-db-volume:
 
 networks:
-  - fraud-detection
-    driver: bridge
+    fraud-detection:
+      driver: bridge
 
