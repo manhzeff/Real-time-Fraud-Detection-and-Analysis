@@ -1892,3 +1892,11 @@ File Path                                                                       
 [2025-04-04T09:33:46.986+0000] {manager.py:465} INFO - Exiting gracefully upon receiving signal 15
 [2025-04-04T09:33:46.982+0000] {manager.py:465} INFO - Exiting gracefully upon receiving signal 15
 [2025-04-04T09:33:46.986+0000] {manager.py:465} INFO - Exiting gracefully upon receiving signal 15
+[2025-04-05T07:40:21.442+0000] {manager.py:483} INFO - Processing files using up to 2 processes at a time 
+[2025-04-05T07:40:21.449+0000] {manager.py:484} INFO - Process each file at most once every 30 seconds
+[2025-04-05T07:40:21.459+0000] {manager.py:485} INFO - Checking for new files in /opt/airflow/dags every 300 seconds
+[2025-04-05T07:40:21.461+0000] {manager.py:821} INFO - Searching for files in /opt/airflow/dags
+[2025-04-05T07:40:21.494+0000] {manager.py:824} INFO - There are 0 files in /opt/airflow/dags
+[2025-04-05T07:45:21.828+0000] {manager.py:821} INFO - Searching for files in /opt/airflow/dags
+[2025-04-05T07:45:21.836+0000] {manager.py:824} INFO - There are 0 files in /opt/airflow/dags
+[2025-04-05T07:49:00.195+0000] {manager.py:465} INFO - Exiting gracefully upon receiving signal 15

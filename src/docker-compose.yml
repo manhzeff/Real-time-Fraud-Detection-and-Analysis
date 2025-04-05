@@ -46,11 +46,10 @@
 ---
 x-airflow-common:
   &airflow-common
-  # In order to add custom dependencies or upgrade provider packages you can use your extended image.
-  # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
-  # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.10.5}
-  # build: .
+
+ 
+  build: ./airflow
+  image: airflow-training:latest
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -59,7 +58,7 @@ x-airflow-common:
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
     # yamllint disable rule:line-length
     # Use simple http server on scheduler for health checks
@@ -72,11 +71,16 @@ x-airflow-common:
     # The following line can be used to set a custom config file, stored in the local config folder
     # If you want to use it, outcomment it and replace airflow.cfg with the name of your config file
     # AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
+    MLFLOW_TRACKING_URI: 'http://mlflow-server:5500'
+    MLFLOW_S3_ENDPOINT_URL: 'http://minio:9000'
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+    - ./models:/app/models
+    - ./config.yaml:/app/config.yaml
+    - ./env:/app/.env
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -94,12 +98,15 @@ services:
       POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
+      - ./init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
       retries: 5
       start_period: 5s
     restart: always
+    networks:
+      - fraud-detection
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -114,6 +121,8 @@ services:
       retries: 50
       start_period: 30s
     restart: always
+    networks:
+      - fraud-detection
 
   airflow-webserver:
     <<: *airflow-common
@@ -131,6 +140,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      - fraud-detection
 
   airflow-scheduler:
     <<: *airflow-common
@@ -146,6 +157,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      - fraud-detection
 
   airflow-worker:
     <<: *airflow-common
@@ -169,6 +182,11 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - fraud-detection
 
   airflow-triggerer:
     <<: *airflow-common
@@ -184,6 +202,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      - fraud-detection
 
   airflow-init:
     <<: *airflow-common
@@ -248,6 +268,8 @@ services:
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
+    networks:
+      - fraud-detection
 
   airflow-cli:
     <<: *airflow-common
@@ -261,7 +283,8 @@ services:
       - bash
       - -c
       - airflow
-
+    networks:
+      - fraud-detection
   # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
   # or by explicitly targeted on the command line e.g. docker-compose up flower.
   # See: https://docs.docker.com/compose/profiles/
@@ -283,6 +306,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      - fraud-detection
 #MINIO
 
   #MC is a command line tool for MinIO
@@ -307,15 +332,30 @@ services:
     networks:
       - fraud-detection
 
-
+  minio:
+    image: minio/minio
+    container_name: minio
+    platform: linux/amd64
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001" --address ":9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USERNAME}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
+    volumes:
+      - minio_data:/data
+    networks:
+      - fraud-detection
 
 #MLFlow integration
-  mlflow_server:
+  mlflow-server:
     restart: always
     build: ./mlflow
     image: mlflow-server
     container_name: mlflow-server
-    denpends_on:
+    depends_on:
       - mc
       - postgres
     ports:
@@ -329,6 +369,8 @@ services:
       - fraud-detection
 volumes:
   postgres-db-volume:
+  minio_data:
+    
 
 networks:
     fraud-detection:
