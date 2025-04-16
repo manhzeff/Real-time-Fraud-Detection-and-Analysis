@@ -3,3 +3,6 @@ kafka-python
 faker
 jsonschema
 certifi 
+confluent-kafka
+elasticsearch
+minio

@@ -7,3 +7,12 @@ python-dotenv
 boto3
 mlflow
 pyyaml
+minio==7.1.16
+apache-airflow-providers-postgres==5.6.1
+airflow-provider-great-expectations==0.2.6
+apache-airflow-providers-docker==3.7.5
+apache-airflow-providers-amazon
+apache-airflow-providers-apache-spark
+s3fs==0.4.2
+pyarrow==16.1.0
+delta-spark==3.1.0
