@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: snowflake
+    database: TEST  # Thay đổi thành database của bạn
+    schema: PUBLIC     # Thay đổi thành schema của bạn
+    tables:
+      - name: PROCESSED_FRAUD_TRANSACTIONS
+        description: "Dữ liệu giao dịch đã được xử lý"
+        columns:
+          - name: transaction_id
+            description: "ID giao dịch duy nhất"
+            tests:
+              - unique
+              - not_null

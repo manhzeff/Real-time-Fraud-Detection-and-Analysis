@@ -6,3 +6,6 @@ certifi
 confluent-kafka
 elasticsearch
 minio
+pandas
+pyarrow
+boto3

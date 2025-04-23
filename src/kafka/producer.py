@@ -19,7 +19,7 @@ KAFKA_BROKER = os.getenv('CONFLUENT_BOOTSTRAP_SERVERS')
 API_KEY = os.getenv('CONFLUENT_API_KEY')
 API_SECRET = os.getenv('CONFLUENT_API_SECRET')
 TOPIC_NAME = os.getenv('KAFKA_TOPIC', 'transactions')
-NUM_TRANSACTIONS = 1000
+NUM_TRANSACTIONS = 100
 LOG_FILE = 'producer_confluent.log'
 
 # --- Thiết lập Logging (Không thay đổi) ---
@@ -70,8 +70,7 @@ class TransactionProducer:
             raise ValueError("Thiếu cấu hình Kafka")
 
         # --- Cấu hình cho confluent-kafka ---
-        # Sử dụng dictionary thay vì kwargs
-        # Tên các tham số khác với kafka-python
+    
         conf = {
             'bootstrap.servers': self.bootstrap_servers,
             'security.protocol': 'SASL_SSL',
@@ -92,8 +91,7 @@ class TransactionProducer:
             'queue.buffering.max.ms': 1000,       # Thời gian tối đa buffer message
             # Callback cho lỗi chung của producer (ví dụ: disconnect)
             'error_cb': self._producer_error_callback,
-            # Có thể thêm các config khác tại đây:
-            # https://github.com/confluentinc/librdkafka/blob/master/CONFIGURATION.md
+          
         }
         # ---------------------------------------
 
@@ -203,7 +201,6 @@ class TransactionProducer:
         return transaction
 
     # --- Callback cho confluent-kafka ---
-    # Gộp _on_send_success và _on_send_error thành một delivery_report
     def delivery_report(self, err, msg, total_transactions=0):
         """
         Callback được gọi bởi confluent-kafka khi tin nhắn được gửi thành công hoặc thất bại.
@@ -215,12 +212,10 @@ class TransactionProducer:
             self.error_count += 1
             # Log chi tiết lỗi từ KafkaError
             self.logger.error(f"Gửi tin nhắn thất bại: {err.str()}") # err.str() cung cấp mô tả lỗi
-            # Có thể kiểm tra err.code() để xử lý các lỗi cụ thể nếu cần
-            # Ví dụ: if err.code() == KafkaError._MSG_TIMED_OUT: ...
+        
         else:
             self.delivered_count += 1
-            # Log ít thường xuyên hơn để không ảnh hưởng hiệu năng
-            # Chia cho 50 để log khoảng 20 lần cho 1000 msg, hoặc ít nhất 1 lần
+          
             log_frequency = max(1, total_transactions // 50)
             if self.delivered_count % log_frequency == 0:
                 self.logger.debug(f"Gửi thành công tin nhắn {self.delivered_count}/{total_transactions} "

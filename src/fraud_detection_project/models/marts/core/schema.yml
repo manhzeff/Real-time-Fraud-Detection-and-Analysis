@@ -1,0 +1,68 @@
+# models/marts/core/schema.yml
+version: 2
+
+models:
+  - name: fact_transactions
+    description: "Bảng fact chính chứa thông tin giao dịch"
+    columns:
+      - name: transaction_id
+        description: "ID duy nhất của giao dịch"
+        tests:
+          - unique
+          - not_null
+      - name: is_fraud
+        description: "Đánh dấu giao dịch có phải gian lận không (1=Gian lận, 0=Không gian lận)"
+
+  - name: dim_customer
+    description: "Thông tin về khách hàng"
+    columns:
+      - name: customer_id
+        description: "ID khách hàng"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_merchant
+    description: "Thông tin về người bán/đơn vị chấp nhận thanh toán"
+    columns:
+      - name: merchant_id
+        description: "ID người bán"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_location
+    description: "Thông tin về vị trí giao dịch"
+    columns:
+      - name: location_key
+        description: "Khóa duy nhất cho vị trí"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_time
+    description: "Thông tin thời gian giao dịch"
+    columns:
+      - name: time_key
+        description: "Khóa duy nhất cho thời gian"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_device
+    description: "Thông tin về thiết bị thực hiện giao dịch"
+    columns:
+      - name: device_id
+        description: "ID thiết bị"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_payment_method
+    description: "Thông tin về phương thức thanh toán"
+    columns:
+      - name: payment_method_key
+        description: "Khóa duy nhất cho phương thức thanh toán"
+        tests:
+          - unique
+          - not_null

@@ -11,3 +11,6 @@ python-dotenv
 boto3
 mlflow
 pyyaml
+imbalanced-learn
+matplotlib
+lightgbm
