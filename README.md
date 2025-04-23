@@ -24,7 +24,7 @@ The entire infrastructure is containerized using **Docker** and **Docker Compose
 
 Visual representation of the end-to-end pipeline:
 
-![Fraud Detection Architecture Diagram](a6023afb-b8c9-47c8-a278-57e38d6df7ce.png)
+![Fraud Detection Architecture Diagram](img/763.drawio.png)
 *Figure 1: High-level architecture of the fraud detection system.*
 
 ---
