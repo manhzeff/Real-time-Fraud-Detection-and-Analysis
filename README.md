@@ -97,9 +97,7 @@ Visual representation of the end-to-end pipeline:
 This dashboard visualizes trends in fraudulent transactions over time, segmented by various features such as country, transaction type, and device.
 
 ![Fraud Detection Trends Dashboard](img/wqgqagqag_page-0001.jpg)
-
-
-![Fraud Detection Trends Dashboard](img/wqgqagqag_page-0002.jpg)
+![](img/wqgqagqag_page-0002.jpg)
 
 
 
