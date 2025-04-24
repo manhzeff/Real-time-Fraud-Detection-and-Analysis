@@ -1,4 +1,4 @@
-🕵️‍♂️ Fraud Detection & Analysis Pipeline
+# 🕵️‍♂️ Fraud Detection & Analysis Pipeline
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
