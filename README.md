@@ -1,4 +1,4 @@
-# 🕵️‍♂️ Fraud Detection & Analysis Pipeline
+![wqgqagqag_page-0002](https://github.com/user-attachments/assets/648ae266-a9d9-4817-b9a8-69524c68efda)# 🕵️‍♂️ Fraud Detection & Analysis Pipeline
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -86,6 +86,24 @@ Visual representation of the end-to-end pipeline:
 ### 7. **📊 Monitoring & Visualization**
 - **Data Issues:** **Elasticsearch** stores records of invalid/failed transactions from the initial validation step. Kibana (part of the Elastic Stack) can be used for dashboards on data quality issues.
 - **Business Intelligence:** **Power BI** connects directly to **Snowflake** (PRODUCTION tables) to build interactive dashboards visualizing fraud trends, key metrics, and model insights for business users.
+
+
+---
+
+## 📊 Power BI Dashboards
+
+### 1. Fraud Detection Trends
+
+This dashboard visualizes trends in fraudulent transactions over time, segmented by various features such as country, transaction type, and device.
+
+![Fraud Detection Trends Dashboard](images/wqgqagqag_page-0001.jpg)
+
+
+![Fraud Detection Trends Dashboard](images/wqgqagqag_page-0002.jpg)
+
+
+
+
 
 ---
 
