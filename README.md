@@ -109,38 +109,46 @@ This dashboard visualizes trends in fraudulent transactions over time, segmented
 
 Here's a simplified view of the data journey:
 
-```text
+```
 [🐍 Faker Generator]
        │
        ▼
-[☁️ Kafka Broker]───> [🔍 Validation Service]
-       │                      │
-(Valid)│                      └─>(Invalid)──> [⚠️ Elasticsearch]
+[☁️ Kafka Broker] ─────► [🔍 Validation Service]
+       │                         │
+ (Valid)│                         └───► (Invalid) ───► [⚠️ Elasticsearch]
        ▼
 [☁️ Kafka Validated Topic]
        │
        ▼
-[📦 Amazon S3] -> [Raw -> Processed -> Sandbox]
+[📦 Amazon S3]
+       │
+ [Raw] → [Processed] → [Sandbox]
+       │         ▲
+       │         │ (Triggered by Airflow)
+(PySpark Jobs)   │
+       ▼         ▼
+    [🧊 Snowflake]
+       │
+   [STAGING] → [PRODUCTION]
        │              ▲
-(PySpark Jobs)        │ (Triggered by Airflow)
        │              │
-       ▼              ▼ (Load)
-[🧊 Snowflake] -> [STAGING -> PRODUCTION]
-       │              ▲           │
-(dbt Models)          │           │ (Read by PowerBI)
-       │              ▼           ▼
-(Great Expectations ✅)      [📊 Power BI Dashboards]
+  (dbt Models)   (Read by Power BI)
+       │              ▼
+(Great Expectations ✅)    [📊 Power BI Dashboards]
 
 
-       ## MLOps Side-Loop ##
+        ## 🔁 MLOps Side Loop ##
 [📦 S3 Sandbox / 🧊 Snowflake]
        │
        ▼ (Training Job via ✈️ Airflow)
 [🤖 ML Model Training]
        │
-       ├─> [📝 MLflow Tracking Server] -> [🐘 PostgreSQL Backend]
+       ├──► [📝 MLflow Tracking Server] → [🐘 PostgreSQL Backend]
        │
-       └─> [💾 MinIO/S3 Artifact Store]
+       └──► [💾 MinIO / S3 Artifact Store]
+```
+
+
 
 ## 🧰 Tech Stack
 
